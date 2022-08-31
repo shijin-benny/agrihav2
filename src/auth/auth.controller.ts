@@ -31,7 +31,6 @@ export class AuthController {
     @DeviceAndip() DeviceAndip: DeviceIp,
     @GetCurrentUserById() Jwtdta: any,
   ) {
-    console.log(Jwtdta);
     return this.authService.verifyMobile(
       verifyMobileDta,
       DeviceAndip,
@@ -52,6 +51,7 @@ export class AuthController {
     @GetCurrentUserById() Jwtdta: any,
     @DeviceAndip() DeviceAndip: DeviceIp,
   ) {
+    console.log(Jwtdta);
     return this.authService.veriyLogin(
       verifyDta,
       Jwtdta.reg_id,

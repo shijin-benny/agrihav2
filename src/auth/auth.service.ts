@@ -40,10 +40,14 @@ export class AuthService {
   async register(registerDta: registerDto) {
     try {
       const IsRegister = await this.registerModel
-        .findOne({ phone: registerDta.phone })
+        .findOne({
+          $and: [{ phone: registerDta.phone }, { email: registerDta.email }],
+        })
         .exec();
       if (IsRegister?.status === true) {
-        throw new ConflictException('Mobile number Already registered');
+        throw new ConflictException(
+          'Mobile number or Email Already registered',
+        );
       } else {
         let register: Partial<register>;
         let newRegister: registerDocument;
@@ -147,6 +151,7 @@ export class AuthService {
           dta.phone,
           OtpReason.LOGIN,
         );
+        console.log(response);
         if (response?.status) {
           const token = this.jwtService.sign({
             reg_id: Isphone._id,
