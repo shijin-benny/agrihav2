@@ -59,7 +59,7 @@ export class AuthService {
         newRegister = new this.registerModel(register);
         const saveDta = await newRegister.save().catch((error) => {
           if (error.code === 11000) {
-            throw new ConflictException('Phone number already exit');
+            throw new ConflictException('Phone number or email already exit');
           }
           throw new NotAcceptableException('Register Data could not be saved');
         });
@@ -68,8 +68,6 @@ export class AuthService {
           OtpReason.REGISTRATION,
         );
         if (response.status) {
-          console.log(response);
-          console.log(saveDta);
           const token = this.jwtService.sign({
             reg_id: saveDta._id,
             id: response.OtpDta._id,
@@ -143,9 +141,9 @@ export class AuthService {
   // User mobile login
   async mobileLogin(dta: mobileLoginDto) {
     try {
-      const Isphone = await this.registerModel
-        .findOne({ phone: dta.phone })
-        .exec();
+      const phone = parseInt(dta.phone);
+      const Isphone = await this.registerModel.findOne({ phone: phone }).exec();
+      console.log(Isphone);
       if (Isphone?.status === true) {
         const response = await this.otpService.sentOtpMobile(
           dta.phone,
