@@ -23,4 +23,4 @@ export class Otp {
   updatedAt?: boolean | string;
 }
 export const OtpSchema = SchemaFactory.createForClass(Otp);
-OtpSchema.index({ createdAt: 1 }, { expires: '5m' });
+OtpSchema.index({ createdAt: 1 }, { expires: '3m' });
