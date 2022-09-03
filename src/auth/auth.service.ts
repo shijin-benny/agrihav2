@@ -44,10 +44,29 @@ export class AuthService {
           $and: [{ phone: registerDta.phone }, { email: registerDta.email }],
         })
         .exec();
+      console.log(IsRegister);
       if (IsRegister?.status === true) {
         throw new ConflictException(
           'Mobile number or Email Already registered',
         );
+      } else if (IsRegister?.status === false) {
+        const response = await this.otpService.sentOtpMobile(
+          registerDta.phone,
+          OtpReason.REGISTRATION,
+        );
+        console.log(response);
+        if (response.status === true) {
+          const token = this.jwtService.sign({
+            reg_id: IsRegister._id,
+            id: response.OtpDta._id,
+          });
+          return {
+            status: 200,
+            message: 'OTP send successfully',
+            token: token,
+          };
+        }
+        return response;
       } else {
         let register: Partial<register>;
         let newRegister: registerDocument;
@@ -67,7 +86,7 @@ export class AuthService {
           registerDta.phone,
           OtpReason.REGISTRATION,
         );
-        if (response.status) {
+        if (response.status === true) {
           const token = this.jwtService.sign({
             reg_id: saveDta._id,
             id: response.OtpDta._id,
