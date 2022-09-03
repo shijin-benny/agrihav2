@@ -143,14 +143,12 @@ export class AuthService {
     try {
       const phone = parseInt(dta.phone);
       const Isphone = await this.registerModel.findOne({ phone: phone }).exec();
-      console.log(Isphone);
       if (Isphone?.status === true) {
         const response = await this.otpService.sentOtpMobile(
           dta.phone,
           OtpReason.LOGIN,
         );
-        console.log(response);
-        if (response?.status) {
+        if (response?.status === true) {
           const token = this.jwtService.sign({
             reg_id: Isphone._id,
             id: response.OtpDta?._id,

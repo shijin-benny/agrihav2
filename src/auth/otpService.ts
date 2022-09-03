@@ -25,7 +25,7 @@ export class otpService {
   async sentOtpMobile(phone: string, reason: OtpReason) {
     try {
       const IsOtp = await this.otpModel.findOne({ phone: phone });
-      if (!IsOtp) {
+      if (!IsOtp == null) {
         const numberDetails = parsePhoneNumberFromString(phone);
         if (numberDetails?.country === 'IN') {
           let response: AxiosResponse<any>;
