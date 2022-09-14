@@ -16,7 +16,7 @@ import { join } from 'path';
         service: 'gmail',
         auth: {
           type: 'OAuth2',
-          user: 't67206475@gmail.com',
+          user: 'noreply.arclif@gmail.com',
           clientId: process.env.CLIENT_ID,
           clientSecret: process.env.CLIENT_SECRET,
           refreshToken: process.env.REFRESH_TOKEN,

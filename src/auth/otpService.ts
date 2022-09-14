@@ -68,7 +68,7 @@ export class otpService {
   }
   async verifyOtp(id: ObjectId, verifyDta: verifyMobileDto) {
     const Isotp = await this.otpModel.findOne({ _id: id });
-    if (!Isotp) {
+    if (Isotp === null) {
       throw new NotFoundException('OTP Not Found');
     }
     if (Isotp?.status === Status.EXPIRED) {
