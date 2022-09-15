@@ -17,6 +17,7 @@ export class UserService {
   }
 
   async update(id: ObjectId, updateUserDto: UpdateUserDto) {
+    // if(updateUserDto.name || updateUserDto.email)
     await this.userModel
       .updateOne({ _id: id }, { $set: updateUserDto })
       .catch((err) => {

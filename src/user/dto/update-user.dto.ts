@@ -10,7 +10,6 @@ import {
 } from 'class-validator';
 
 export class UpdateUserDto {
-  @IsNotEmpty()
   @IsString()
   @MaxLength(24)
   @MinLength(3)
