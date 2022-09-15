@@ -140,6 +140,7 @@ export class AuthService {
           newUser = new this.userModel(user);
           const userData = await newUser.save();
           this.MailerService.welcomeMail(IsregisterDta);
+          this.MailerService.supportMail(IsregisterDta);
           const token = this.jwtService.sign({
             id: userData._id,
           });

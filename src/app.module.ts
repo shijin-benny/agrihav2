@@ -5,6 +5,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { MailModule } from './Mailer/mailer.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { MailModule } from './Mailer/mailer.module';
       ttl: 60,
       limit: 10,
     }),
+    UserModule,
   ],
   controllers: [],
   providers: [

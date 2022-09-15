@@ -36,6 +36,9 @@ export class User {
   bio: string;
 
   @Prop({ default: null })
+  country: string;
+
+  @Prop({ default: null })
   state: string;
 
   @Prop({ default: null })

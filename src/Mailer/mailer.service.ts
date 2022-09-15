@@ -15,7 +15,7 @@ export class MailService {
       const day = moment().format('dddd');
       this.MailerService.sendMail({
         to: userDta.email,
-        from: 't67206475@gmail.com',
+        from: 'noreply.arclif@gmail.com',
         subject: 'Welcome to Agriha.',
         template: './welcome.hbs',
         context: {
@@ -64,6 +64,31 @@ export class MailService {
             cid: 'welcome',
           },
         ],
+      })
+        .then((res) => {
+          return res;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw new Error(error);
+        });
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async supportMail(registerDetails) {
+    try {
+      const date = moment().format('Do MMMM  YYYY');
+      const day = moment().format('dddd');
+      this.MailerService.sendMail({
+        to: 'shijin.arclif@gmail.com',
+        from: 'noreply.arclif@gmail.com',
+        subject: 'New registeration',
+        html: `  <h4>Date:- ${date}</h4> <br>
+        <h4>Username :- ${registerDetails.name}</h4> <br>
+        <h4>Email:-${registerDetails.email}</h4> <br>
+        <h4>Phone:-${registerDetails.phone}</h4> <br>`,
       })
         .then((res) => {
           return res;
