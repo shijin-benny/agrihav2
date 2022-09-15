@@ -12,13 +12,7 @@ export class User {
   registered_id: register;
 
   @Prop({ required: false, default: null })
-  firstname: string;
-
-  @Prop({ required: false, default: null })
-  lastname: string;
-
-  @Prop({ lowercase: true, index: true, unique: true, sparse: true })
-  username: string;
+  name: string;
 
   @Prop({ lowercase: true, index: true, unique: true, sparse: true })
   secondaryContact: string;
@@ -26,14 +20,11 @@ export class User {
   @Prop({ unique: true, index: true, sparse: true })
   email: string;
 
-  @Prop({ lowercase: true, index: true, sparse: true })
+  @Prop({ default: null, index: true, sparse: true })
   profession: string;
 
   @Prop({ default: null })
   profile_pic: string;
-
-  @Prop({ default: null })
-  bio: string;
 
   @Prop({ default: null })
   country: string;

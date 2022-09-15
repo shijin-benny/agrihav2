@@ -14,21 +14,16 @@ export class UpdateUserDto {
   @IsString()
   @MaxLength(24)
   @MinLength(3)
-  firstname: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(24)
-  lastname: string;
+  name: string;
 
   @IsString()
   profile_pic: string;
 
   @IsString()
-  bio: string;
+  country: string;
 
   @IsString()
-  country: string;
+  profession: string;
 
   @IsString()
   state: string;
