@@ -45,7 +45,7 @@ export class User {
   location: string;
 
   @Prop({ default: null })
-  pincode: Number;
+  pincode: string;
 }
 
 const UserSchema = SchemaFactory.createForClass(User);

@@ -39,6 +39,6 @@ export class UpdateUserDto {
   @IsString()
   location: string;
 
-  @IsNumber()
-  pincode: number;
+  @IsString()
+  pincode: string;
 }
