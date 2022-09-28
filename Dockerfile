@@ -1,21 +1,16 @@
+FROM node:16
 
-# Base image
-FROM node:14-slim
- 
-# Create app directory
-WORKDIR /usr/src/app
- 
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
+WORKDIR /usr/src/server
+
+
 COPY package*.json ./
- 
-# Install app dependencies
+
 RUN npm install
- 
-# Bundle app source
+
 COPY . .
- 
-# Creates a "dist" folder with the production build
+
 RUN npm run build
- 
-# Start the server using the production build
-CMD [ "node", "dist/main.js" ]
+
+EXPOSE 8080
+
+CMD [ "node","dist/main" ]
