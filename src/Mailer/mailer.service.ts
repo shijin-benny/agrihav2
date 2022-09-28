@@ -82,7 +82,7 @@ export class MailService {
       const date = moment().format('Do MMMM  YYYY');
       const day = moment().format('dddd');
       this.MailerService.sendMail({
-        to: 'shijin.arclif@gmail.com',
+        to: 'support.arclif@gmail.com',
         from: 'noreply.arclif@gmail.com',
         subject: 'New registeration',
         html: `  <h4>Date:- ${date}</h4> <br>
