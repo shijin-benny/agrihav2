@@ -1,0 +1,10 @@
+runtime: nodejs16
+
+env_variables:
+  DATABASE_URL: mongodb+srv://arclifuser:VeZeUSLtaxILLyl8@arclif-test.cc1se.mongodb.net/AGRIHA_DB?retryWrites=true&w=majority
+  CLIENT_ID: 675282116623-9aprion4u3m59bko4ib39t1hoklu6cqo.apps.googleusercontent.com
+  CLIENT_SECRET: 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
+  REDIRECT_URL: https://developers.google.com/oauthplayground
+  REFRESH_TOKEN: 1//04FGIF35aWousCgYIARAAGAQSNwF-L9Ir1c8099LX9NsV7RLPMu1dcoMetI8VbYfdCiKRGFDMl0tDZzDGdb_QKJ79UPztFAHAGyQ
+
+service: service2
