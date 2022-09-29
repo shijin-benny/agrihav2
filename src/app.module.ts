@@ -6,6 +6,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { MailModule } from './Mailer/mailer.module';
 import { UserModule } from './user/user.module';
+import { EnquiryModule } from './enquiry/enquiry.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UserModule } from './user/user.module';
       limit: 10,
     }),
     UserModule,
+    EnquiryModule,
   ],
   controllers: [],
   providers: [

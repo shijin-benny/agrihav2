@@ -101,4 +101,37 @@ export class MailService {
       return error;
     }
   }
+
+  async enquiryMail(enquiryDetails) {
+    try {
+      const date = moment().format('Do MMMM  YYYY');
+      const day = moment().format('dddd');
+      this.MailerService.sendMail({
+        to: 'nikhil.arclif@gmail.com',
+        from: 'noreply.arclif@gmail.com',
+        subject: 'New Enquiry',
+        template: './enquiry.hbs',
+        context: {
+          username: enquiryDetails.username,
+          email: enquiryDetails.email,
+          message: enquiryDetails.message,
+          phone: enquiryDetails.phone,
+        },
+        attachments: [
+          {
+            filename: 'logo.png',
+            path: join(__dirname, 'public', 'image', 'logo.png'),
+            cid: 'logo',
+          },
+        ],
+      })
+        .then((res) => {
+          return res;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw new Error(error);
+        });
+    } catch (error) {}
+  }
 }
