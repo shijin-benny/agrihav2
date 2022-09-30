@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { join } from 'path';
 import { registerDto } from 'src/auth/dto/auth.dto';
@@ -104,8 +104,6 @@ export class MailService {
 
   async enquiryMail(enquiryDetails) {
     try {
-      const date = moment().format('Do MMMM  YYYY');
-      const day = moment().format('dddd');
       this.MailerService.sendMail({
         to: 'nikhil.arclif@gmail.com',
         from: 'noreply.arclif@gmail.com',
@@ -133,5 +131,38 @@ export class MailService {
           throw new Error(error);
         });
     } catch (error) {}
+  }
+
+  async projectAdded_mail(projectDta, userDta) {
+    try {
+      console.log(projectDta);
+      console.log(userDta);
+      this.MailerService.sendMail({
+        to: userDta.registered_id.email,
+        from: 'noreply.arclif@gmail.com',
+        subject: 'Congratulation',
+        template: './projectSuccess.hbs',
+        context: {
+          name: userDta.registered_id.name,
+          projectId: projectDta.project_name,
+        },
+        attachments: [
+          {
+            filename: 'logo.png',
+            path: join(__dirname, 'public', 'image', 'logo.png'),
+            cid: 'logo',
+          },
+        ],
+      })
+        .then((res) => {
+          return res;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw new Error(error);
+        });
+    } catch (error) {
+      throw new BadRequestException();
+    }
   }
 }

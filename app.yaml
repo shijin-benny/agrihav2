@@ -8,9 +8,4 @@ env_variables:
   REFRESH_TOKEN: '1//04FGIF35aWousCgYIARAAGAQSNwF-L9Ir1c8099LX9NsV7RLPMu1dcoMetI8VbYfdCiKRGFDMl0tDZzDGdb_QKJ79UPztFAHAGyQ'
   PORT: 8080
 
-manual_scaling:
-  instances: 1
-resources:
-  cpu: 1
-  memory_gb: 0.5
-  disk_size_gb: 10
+service: serverv2

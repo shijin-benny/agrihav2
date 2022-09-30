@@ -30,20 +30,4 @@ export class EnquiryService {
     this.MailerService.enquiryMail(saveEnquiry);
     return { status: 200, message: 'Enquiry details added successfully' };
   }
-
-  findAll() {
-    return `This action returns all enquiry`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} enquiry`;
-  }
-
-  update(id: number, updateEnquiryDto: UpdateEnquiryDto) {
-    return `This action updates a #${id} enquiry`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} enquiry`;
-  }
 }
