@@ -16,8 +16,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: false }));
   app.use(expressip().getIpInfoMiddleware);
-  const PORT = Number(process.env.PORT) || 8080;
-  console.log(PORT);
-  await app.listen(PORT);
+  const port = process.env.PORT || 8081;
+  await app.listen(port, () => {
+    console.log('Hello world listening on port', port);
+  });
 }
 bootstrap();
