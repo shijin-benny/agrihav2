@@ -33,7 +33,7 @@ export class UserController {
     return this.userService.update(Jwtdta.id, updateUserDto);
   }
 
-  @Post('project_succcess')
+  @Post('project_success')
   @UseGuards(AuthGuard('jwt'))
   projectAdded_mail(
     @GetCurrentUserById() Jwtdta: any,
