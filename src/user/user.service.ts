@@ -40,6 +40,7 @@ export class UserService {
   async projectAdded_mail(userId, projectId) {
     try {
       console.log(userId);
+      console.log(projectId);
       const project = await this.projectModel.findOne({ _id: projectId.id });
       const userDta = await (
         await this.userModel.findOne({ _id: userId })
@@ -47,6 +48,8 @@ export class UserService {
       if (project && userDta) {
         this.MailerService.projectAdded_mail(project, userDta);
         return { status: 200, message: 'Mail sended successfully' };
+      } else {
+        throw new NotFoundException('project id or user id not found');
       }
     } catch (error) {
       console.log(error);
