@@ -13,6 +13,7 @@ import {
 } from 'src/schemas/login_session.schema';
 import { User, UserSchema } from 'src/schemas/userSchema';
 import { MailModule } from 'src/Mailer/mailer.module';
+import { architects, architectsSchema } from 'src/schemas/architect.schema';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { MailModule } from 'src/Mailer/mailer.module';
       { name: register.name, schema: registerSchema },
       { name: LoginSession.name, schema: LoginSessionSchema },
       { name: User.name, schema: UserSchema },
+      { name: architects.name, schema: architectsSchema },
     ]),
   ],
   controllers: [AuthController],

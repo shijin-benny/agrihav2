@@ -12,6 +12,7 @@ import { log } from 'console';
 import { Model, ObjectId } from 'mongoose';
 import { MailService } from 'src/Mailer/mailer.service';
 import { OtpReason, Status } from 'src/models/Enums';
+import { architects, architectsDocument } from 'src/schemas/architect.schema';
 import {
   LoginSession,
   LoginSessionDocument,
@@ -20,7 +21,12 @@ import { Otp, otpDocument } from 'src/schemas/otp.schema';
 import { register, registerDocument } from 'src/schemas/register.schema';
 import { User, UserDocument } from 'src/schemas/userSchema';
 import { DeviceIp } from './auth.model';
-import { mobileLoginDto, registerDto, verifyMobileDto } from './dto/auth.dto';
+import {
+  architect_loginDto,
+  mobileLoginDto,
+  registerDto,
+  verifyMobileDto,
+} from './dto/auth.dto';
 import { otpService } from './otpService';
 
 @Injectable()
@@ -33,6 +39,8 @@ export class AuthService {
     @InjectModel(LoginSession.name)
     private sessionModel: Model<LoginSessionDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(architects.name)
+    private architectsModel: Model<architectsDocument>,
     private MailerService: MailService,
   ) {}
 
@@ -215,10 +223,65 @@ export class AuthService {
         });
         return {
           status: 200,
-          message: 'User registeration successfully',
+          message: 'User login successfully',
           token: token,
         };
       }
+    }
+  }
+  async architect_login(dta: architect_loginDto) {
+    try {
+      const phone = dta.phone.slice(3);
+      const check_phoneNumber = await this.architectsModel.findOne({
+        phone: phone,
+      });
+      if (check_phoneNumber) {
+        const response = await this.otpService.sentOtpMobile(
+          dta.phone,
+          OtpReason.LOGIN,
+        );
+        if (response?.status === true) {
+          const token = this.jwtService.sign({
+            id: response.OtpDta?._id,
+            arc_id: check_phoneNumber._id,
+          });
+          return { status: 200, token: token };
+        }
+        return response;
+      } else {
+        throw new NotFoundException();
+      }
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async verify_architectLogin(dta: verifyMobileDto, Jwtdta, DeviceAndip) {
+    try {
+      const response = await this.otpService.verifyOtp(Jwtdta.id, dta);
+      if (response.status === 'Otp Matched') {
+        let session: Partial<LoginSession>;
+        let newSession: LoginSessionDocument;
+        session = {
+          device: DeviceAndip.device,
+          ip: DeviceAndip.ip,
+          status: Status.ACTIVE,
+          reason: OtpReason.LOGIN,
+          user: Jwtdta.arc_id,
+        };
+        newSession = new this.sessionModel(session);
+        newSession.save();
+        const token = this.jwtService.sign({
+          id: Jwtdta.arc_id,
+        });
+        return {
+          status: 200,
+          message: 'Architect login successfully',
+          token: token,
+        };
+      }
+    } catch (error) {
+      return new BadRequestException(error);
     }
   }
 }

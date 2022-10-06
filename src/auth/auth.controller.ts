@@ -13,7 +13,12 @@ import { GetCurrentUserById } from 'src/utils';
 import { DeviceIp } from './auth.model';
 import { AuthService } from './auth.service';
 import { DeviceAndip } from './deviceandip.decorator';
-import { mobileLoginDto, registerDto, verifyMobileDto } from './dto/auth.dto';
+import {
+  architect_loginDto,
+  mobileLoginDto,
+  registerDto,
+  verifyMobileDto,
+} from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -58,5 +63,20 @@ export class AuthController {
       Jwtdta.id,
       DeviceAndip,
     );
+  }
+
+  @Post('architect_login')
+  architect_login(@Body() dta: architect_loginDto) {
+    return this.authService.architect_login(dta);
+  }
+
+  @Post('verify_architectlogin')
+  @UseGuards(AuthGuard('jwt'))
+  verify_architectlogin(
+    @Body() dta: verifyMobileDto,
+    @GetCurrentUserById() Jwtdta: any,
+    @DeviceAndip() DeviceAndip: DeviceIp,
+  ) {
+    return this.authService.verify_architectLogin(dta, Jwtdta, DeviceAndip);
   }
 }

@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MailModule } from './Mailer/mailer.module';
 import { UserModule } from './user/user.module';
 import { EnquiryModule } from './enquiry/enquiry.module';
+import { FileuploadModule } from './fileupload/fileupload.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { EnquiryModule } from './enquiry/enquiry.module';
     }),
     UserModule,
     EnquiryModule,
+    FileuploadModule,
   ],
   controllers: [],
   providers: [

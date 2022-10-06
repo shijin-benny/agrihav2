@@ -6,6 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { MailService } from 'src/Mailer/mailer.service';
+import { Fileupload } from 'src/schemas/fileupload.schema';
 import { Project, ProjectDocument } from 'src/schemas/project.schema';
 import { User, UserDocument } from 'src/schemas/userSchema';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,6 +17,8 @@ export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
+    @InjectModel(Fileupload.name)
+    private projectFileModel: Model<ProjectDocument>,
     private MailerService: MailService,
   ) {}
 
@@ -54,6 +57,25 @@ export class UserService {
     } catch (error) {
       console.log(error);
       throw new BadRequestException();
+    }
+  }
+
+  async userProject_files(id) {
+    try {
+      const projectFiles = await this.projectFileModel.findOne({
+        project_id: id,
+      });
+      if (projectFiles) {
+        return {
+          status: 200,
+          message: "User's project files",
+          data: projectFiles,
+        };
+      } else {
+        throw new NotFoundException();
+      }
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
 }

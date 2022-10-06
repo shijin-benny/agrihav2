@@ -35,3 +35,11 @@ export class mobileLoginDto {
   @IsString()
   phone: string;
 }
+
+export class architect_loginDto {
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(13)
+  @MinLength(13)
+  phone: string;
+}

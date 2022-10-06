@@ -41,4 +41,9 @@ export class UserController {
   ) {
     return this.userService.projectAdded_mail(Jwtdta.id, projectId);
   }
+
+  @Get('project_files/:id')
+  userProjectfiles(@Param('id') id: string) {
+    return this.userService.userProject_files(id);
+  }
 }
