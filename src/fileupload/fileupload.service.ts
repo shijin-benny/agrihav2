@@ -34,7 +34,7 @@ export class FileuploadService {
 
   async findDta(id) {
     try {
-      const uploaded_data = await this.fileuploadModel.findOne({
+      const uploaded_data = await this.fileuploadModel.find({
         project_id: id,
       });
       return { status: 200, data: uploaded_data };

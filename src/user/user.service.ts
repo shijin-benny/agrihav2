@@ -6,7 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { MailService } from 'src/Mailer/mailer.service';
-import { Fileupload } from 'src/schemas/fileupload.schema';
+import { Fileupload, FileuploadDocument } from 'src/schemas/fileupload.schema';
 import { Project, ProjectDocument } from 'src/schemas/project.schema';
 import { User, UserDocument } from 'src/schemas/userSchema';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -18,7 +18,7 @@ export class UserService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
     @InjectModel(Fileupload.name)
-    private projectFileModel: Model<ProjectDocument>,
+    private projectFileModel: Model<FileuploadDocument>,
     private MailerService: MailService,
   ) {}
 
