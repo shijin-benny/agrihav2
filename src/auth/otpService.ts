@@ -12,8 +12,8 @@ import { AxiosResponse } from 'axios';
 import { log } from 'console';
 import { NationalNumber, parsePhoneNumberFromString } from 'libphonenumber-js';
 import { Model, ObjectId } from 'mongoose';
-import { OtpReason, Status } from 'src/models/Enums';
-import { Otp, otpDocument } from 'src/schemas/otp.schema';
+import { OtpReason, Status } from '../models/Enums';
+import { Otp, otpDocument } from '../schemas/otp.schema';
 import { mobileLoginDto, verifyMobileDto } from './dto/auth.dto';
 const SMS_API = `682b19a3-7047-11eb-a9bc-0200cd936042`;
 @Injectable()

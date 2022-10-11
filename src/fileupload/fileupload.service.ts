@@ -6,8 +6,8 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { notEqual } from 'assert';
 import { Model, ObjectId } from 'mongoose';
-import { Fileupload, FileuploadDocument } from 'src/schemas/fileupload.schema';
-import { Project, ProjectDocument } from 'src/schemas/project.schema';
+import { Fileupload, FileuploadDocument } from '../schemas/fileupload.schema';
+import { Project, ProjectDocument } from '../schemas/project.schema';
 import { CreateFileuploadDto } from './dto/create-fileupload.dto';
 import { UpdateFileuploadDto } from './dto/update-fileupload.dto';
 
@@ -18,6 +18,7 @@ export class FileuploadService {
     @InjectModel(Fileupload.name)
     private fileuploadModel: Model<FileuploadDocument>,
   ) {}
+
   async create(createFileuploadDto: CreateFileuploadDto) {
     try {
       const newFileupload = new this.fileuploadModel(createFileuploadDto);
@@ -25,6 +26,7 @@ export class FileuploadService {
         throw new NotAcceptableException(error);
       });
       if (result) {
+        console.log(result);
         return { status: 200, message: 'file uploaded successfully' };
       }
     } catch (error) {
@@ -56,8 +58,17 @@ export class FileuploadService {
     }
   }
 
-  update(id: number, updateFileuploadDto: UpdateFileuploadDto) {
-    return `This action updates a #${id} fileupload`;
+  async updatePayment_status(id) {
+    try {
+      await this.fileuploadModel
+        .updateOne({ _id: id }, { $set: { payment_status: true } })
+        .catch((error) => {
+          throw new Error(error);
+        });
+      return { status: 200, message: 'Payment status updated' };
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async remove(id) {

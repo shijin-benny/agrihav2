@@ -10,16 +10,16 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { log } from 'console';
 import { Model, ObjectId } from 'mongoose';
-import { MailService } from 'src/Mailer/mailer.service';
-import { OtpReason, Status } from 'src/models/Enums';
-import { architects, architectsDocument } from 'src/schemas/architect.schema';
+import { MailService } from '../Mailer/mailer.service';
+import { OtpReason, Status } from '../models/Enums';
+import { architects, architectsDocument } from '../schemas/architect.schema';
 import {
   LoginSession,
   LoginSessionDocument,
-} from 'src/schemas/login_session.schema';
-import { Otp, otpDocument } from 'src/schemas/otp.schema';
-import { register, registerDocument } from 'src/schemas/register.schema';
-import { User, UserDocument } from 'src/schemas/userSchema';
+} from '../schemas/login_session.schema';
+import { Otp, otpDocument } from '../schemas/otp.schema';
+import { register, registerDocument } from '../schemas/register.schema';
+import { User, UserDocument } from '../schemas/userSchema';
 import { DeviceIp } from './auth.model';
 import {
   architect_loginDto,
@@ -232,10 +232,11 @@ export class AuthService {
   async architect_login(dta: architect_loginDto) {
     try {
       const phone = dta.phone.slice(3);
-      const check_phoneNumber = await this.architectsModel.findOne({
+      const check_phoneNumber_response = await this.architectsModel.findOne({
         phone: phone,
       });
-      if (check_phoneNumber) {
+
+      if (check_phoneNumber_response) {
         const response = await this.otpService.sentOtpMobile(
           dta.phone,
           OtpReason.LOGIN,
@@ -243,7 +244,7 @@ export class AuthService {
         if (response?.status === true) {
           const token = this.jwtService.sign({
             id: response.OtpDta?._id,
-            arc_id: check_phoneNumber._id,
+            arc_id: check_phoneNumber_response._id,
           });
           return { status: 200, token: token };
         }
@@ -278,6 +279,7 @@ export class AuthService {
           status: 200,
           message: 'Architect login successfully',
           token: token,
+          id: Jwtdta.arc_id,
         };
       }
     } catch (error) {

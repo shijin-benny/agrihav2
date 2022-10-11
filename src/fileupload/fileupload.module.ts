@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { FileuploadService } from './fileupload.service';
 import { FileuploadController } from './fileupload.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Project, ProjectSchema } from 'src/schemas/project.schema';
-import { Fileupload, FileuploadSchema } from 'src/schemas/fileupload.schema';
+import { Project, ProjectSchema } from '../schemas/project.schema';
+import { Fileupload, FileuploadSchema } from '../schemas/fileupload.schema';
 
 @Module({
   imports: [

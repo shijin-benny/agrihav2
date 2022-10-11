@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { join } from 'path';
-import { registerDto } from 'src/auth/dto/auth.dto';
+import { registerDto } from '../auth/dto/auth.dto';
 import * as moment from 'moment';
 
 @Injectable()

@@ -12,7 +12,7 @@ import { UserService } from './user.service';
 import { CreateUserDto, projectDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { GetCurrentUserById } from 'src/utils';
+import { GetCurrentUserById } from '../utils';
 
 @Controller('user')
 export class UserController {
@@ -43,6 +43,7 @@ export class UserController {
   }
 
   @Get('project_files/:id')
+  @UseGuards(AuthGuard('jwt'))
   userProjectfiles(@Param('id') id: string) {
     return this.userService.userProject_files(id);
   }

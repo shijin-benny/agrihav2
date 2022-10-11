@@ -5,8 +5,8 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { MailService } from 'src/Mailer/mailer.service';
-import { enquiry, enquiryDocument } from 'src/schemas/enquiry.schema';
+import { MailService } from '../Mailer/mailer.service';
+import { enquiry, enquiryDocument } from '../schemas/enquiry.schema';
 import { CreateEnquiryDto } from './dto/create-enquiry.dto';
 import { UpdateEnquiryDto } from './dto/update-enquiry.dto';
 

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { OtpReason } from 'src/models/Enums';
-import { Status } from 'src/models/Enums/Status.enum';
+import { OtpReason } from '../models/Enums';
+import { Status } from '../models/Enums/Status.enum';
 
 export type otpDocument = Otp & Document;
 

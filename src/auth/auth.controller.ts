@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { GetCurrentUserById } from 'src/utils';
+import { GetCurrentUserById } from '../utils';
 import { DeviceIp } from './auth.model';
 import { AuthService } from './auth.service';
 import { DeviceAndip } from './deviceandip.decorator';
