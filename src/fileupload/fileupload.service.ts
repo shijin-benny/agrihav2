@@ -21,7 +21,23 @@ export class FileuploadService {
 
   async create(createFileuploadDto: CreateFileuploadDto) {
     try {
-      const newFileupload = new this.fileuploadModel(createFileuploadDto);
+      const generateUniqueID = (idLength) =>
+        [...Array(idLength).keys()]
+          .map((elem) => Math.random().toString(36).substr(2, 1))
+          .join('');
+      const files = createFileuploadDto.files.map((items: any) => {
+        return {
+          url: items.url,
+          filename: items.filename,
+          id: generateUniqueID(23),
+          isDelete: false,
+        };
+      });
+      const newFileupload = new this.fileuploadModel({
+        project_id: createFileuploadDto.project_id,
+        title: createFileuploadDto.title,
+        files: files,
+      });
       const result = await newFileupload.save().catch((error) => {
         throw new NotAcceptableException(error);
       });
@@ -74,8 +90,8 @@ export class FileuploadService {
   async remove(id) {
     try {
       const response = await this.fileuploadModel.updateOne(
-        { _id: id },
-        { $set: { status: false } },
+        { files: { $elemMatch: { id: id } } },
+        { $set: { 'files.$.isDelete': true } },
       );
       if (response.modifiedCount == 1) {
         return { status: 200, message: 'Project file removed' };
