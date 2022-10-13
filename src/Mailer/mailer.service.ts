@@ -66,6 +66,7 @@ export class MailService {
         ],
       })
         .then((res) => {
+          console.log(res);
           return res;
         })
         .catch((error) => {
@@ -91,6 +92,7 @@ export class MailService {
         <h4>Phone:-${registerDetails.phone}</h4> <br>`,
       })
         .then((res) => {
+          console.log(res);
           return res;
         })
         .catch((error) => {
