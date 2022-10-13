@@ -286,4 +286,11 @@ export class AuthService {
       return new BadRequestException(error);
     }
   }
+
+  checkMail() {
+    const userData = {
+      email: 'shijin.arclif@gmail.com',
+    };
+    this.MailerService.welcomeMail(userData);
+  }
 }
