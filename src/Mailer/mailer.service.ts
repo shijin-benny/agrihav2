@@ -17,7 +17,7 @@ export class MailService {
         to: userDta.email,
         from: 'noreply.arclif@gmail.com',
         subject: 'Welcome to Agriha.',
-        template: '../../welcome.hbs',
+        template: './welcome.hbs',
         context: {
           date: date,
           day: day,
