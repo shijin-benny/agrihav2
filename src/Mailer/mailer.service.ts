@@ -66,7 +66,6 @@ export class MailService {
         ],
       })
         .then((res) => {
-          console.log(res);
           return res;
         })
         .catch((error) => {

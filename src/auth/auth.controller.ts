@@ -79,9 +79,4 @@ export class AuthController {
   ) {
     return this.authService.verify_architectLogin(dta, Jwtdta, DeviceAndip);
   }
-
-  @Get('mail')
-  checkMail() {
-    return this.authService.checkMail();
-  }
 }
