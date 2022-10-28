@@ -23,6 +23,10 @@ export class UserController {
   findOne(@GetCurrentUserById() Jwtdta: any) {
     return this.userService.findOne(Jwtdta.id);
   }
+  @Get('userlist')
+  getAllUsers() {
+    return this.userService.findAllUsers();
+  }
 
   @Patch('update')
   @UseGuards(AuthGuard('jwt'))

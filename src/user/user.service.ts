@@ -85,4 +85,18 @@ export class UserService {
       throw new BadRequestException(error);
     }
   }
+
+  async findAllUsers() {
+    try {
+      const userlist = await this.userModel
+        .find({})
+        .exec()
+        .catch((error) => {
+          throw new NotFoundException(error);
+        });
+      return { status: 200, data: userlist };
+    } catch (error) {
+      return error;
+    }
+  }
 }
