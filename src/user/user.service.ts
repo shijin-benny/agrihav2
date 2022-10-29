@@ -90,6 +90,7 @@ export class UserService {
     try {
       const userlist = await this.userModel
         .find({})
+        .populate('registered_id')
         .exec()
         .catch((error) => {
           throw new NotFoundException(error);
