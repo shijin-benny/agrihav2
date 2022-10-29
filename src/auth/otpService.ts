@@ -22,10 +22,12 @@ export class otpService {
     private http: HttpService,
     @InjectModel(Otp.name) private otpModel: Model<otpDocument>,
   ) {}
+
   async sentOtpMobile(phone: string, reason: OtpReason) {
     try {
-      const IsOtp = await this.otpModel.findOne({ phone: phone });
-      console.log(IsOtp);
+      const IsOtp = await this.otpModel.findOne({
+        $and: [{ phone: phone }, { reason: reason }],
+      });
       if (IsOtp == null) {
         const numberDetails = parsePhoneNumberFromString(phone);
         if (numberDetails?.country === 'IN') {
@@ -66,6 +68,7 @@ export class otpService {
       return error;
     }
   }
+
   async verifyOtp(id: ObjectId, verifyDta: verifyMobileDto) {
     const Isotp = await this.otpModel.findOne({ _id: id });
     if (Isotp === null) {

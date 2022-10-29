@@ -1,3 +1,4 @@
+
 import {
   Controller,
   Get,
@@ -62,21 +63,12 @@ export class AuthController {
       Jwtdta.reg_id,
       Jwtdta.id,
       DeviceAndip,
+      Jwtdta.role,
     );
   }
 
-  @Post('architect_login')
-  architect_login(@Body() dta: architect_loginDto) {
-    return this.authService.architect_login(dta);
-  }
-
-  @Post('verify_architectlogin')
-  @UseGuards(AuthGuard('jwt'))
-  verify_architectlogin(
-    @Body() dta: verifyMobileDto,
-    @GetCurrentUserById() Jwtdta: any,
-    @DeviceAndip() DeviceAndip: DeviceIp,
-  ) {
-    return this.authService.verify_architectLogin(dta, Jwtdta, DeviceAndip);
+  @Get('update-role')
+  update_dbrole() {
+    return this.authService.update_role();
   }
 }

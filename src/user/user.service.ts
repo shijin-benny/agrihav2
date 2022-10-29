@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { MailService } from '../Mailer/mailer.service';
 import { Fileupload, FileuploadDocument } from '../schemas/fileupload.schema';
-import { Project, ProjectDocument } from '../schemas/project.schema';
+import { Project, ProjectDocument } from '../schemas/projects.schema';
 import { User, UserDocument } from '../schemas/userSchema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -88,15 +88,16 @@ export class UserService {
 
   async findAllUsers() {
     try {
-      const userlist = await this.userModel
-        .find({})
-        .populate('registered_id')
-        .sort({ createdAt: -1 })
-        .exec()
-        .catch((error) => {
-          throw new NotFoundException(error);
-        });
-      return { status: 200, data: userlist };
+      // const response = await this.userModel.({registered_id:null})
+      // const userlist = await this.userModel
+      //   .find({})
+      //   .populate('registered_id')
+      //   .sort({ createdAt: -1 })
+      //   .exec()
+      //   .catch((error) => {
+      //     throw new NotFoundException(error);
+      //   });
+      // return { status: 200, data: userlist };
     } catch (error) {
       return error;
     }

@@ -105,7 +105,7 @@ export class MailService {
   async enquiryMail(enquiryDetails) {
     try {
       this.MailerService.sendMail({
-        to: 'nikhil@arclif.com',
+        to: 'nikhil.arclif@gmail.com',
         from: 'noreply.arclif@gmail.com',
         subject: 'New Enquiry',
         template: './enquiry.hbs',

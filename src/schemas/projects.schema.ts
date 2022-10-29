@@ -3,7 +3,7 @@ import mongoose, { Document } from 'mongoose';
 import { Timestamp } from 'rxjs';
 import { User } from './userSchema';
 import { Transform, Type } from '@nestjs/class-transformer';
-import { architects } from './architect.schema';
+import { architects } from './architects.schema';
 
 export type ProjectDocument = Project & Document;
 

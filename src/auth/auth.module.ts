@@ -13,7 +13,7 @@ import {
 } from '../schemas/login_session.schema';
 import { User, UserSchema } from '../schemas/userSchema';
 import { MailModule } from '../Mailer/mailer.module';
-import { architects, architectsSchema } from '../schemas/architect.schema';
+import { architects, architectsSchema } from '../schemas/architects.schema';
 
 @Module({
   imports: [

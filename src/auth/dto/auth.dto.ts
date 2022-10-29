@@ -22,6 +22,10 @@ export class registerDto {
   @MaxLength(24)
   @MinLength(3)
   name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  role: string;
 }
 
 export class verifyMobileDto {
@@ -34,6 +38,10 @@ export class mobileLoginDto {
   @IsNotEmpty()
   @IsString()
   phone: string;
+
+  @IsNotEmpty()
+  @IsString()
+  role: string;
 }
 
 export class architect_loginDto {

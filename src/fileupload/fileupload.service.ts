@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { notEqual } from 'assert';
 import { Model, ObjectId } from 'mongoose';
 import { Fileupload, FileuploadDocument } from '../schemas/fileupload.schema';
-import { Project, ProjectDocument } from '../schemas/project.schema';
+import { Project, ProjectDocument } from '../schemas/projects.schema';
 import { CreateFileuploadDto } from './dto/create-fileupload.dto';
 import { UpdateFileuploadDto } from './dto/update-fileupload.dto';
 
@@ -21,28 +21,11 @@ export class FileuploadService {
 
   async create(createFileuploadDto: CreateFileuploadDto) {
     try {
-      const generateUniqueID = (idLength) =>
-        [...Array(idLength).keys()]
-          .map((elem) => Math.random().toString(36).substr(2, 1))
-          .join('');
-      const files = createFileuploadDto.files.map((items: any) => {
-        return {
-          url: items.url,
-          filename: items.filename,
-          id: generateUniqueID(23),
-          isDelete: false,
-        };
-      });
-      const newFileupload = new this.fileuploadModel({
-        project_id: createFileuploadDto.project_id,
-        title: createFileuploadDto.title,
-        files: files,
-      });
+      const newFileupload = new this.fileuploadModel(createFileuploadDto);
       const result = await newFileupload.save().catch((error) => {
         throw new NotAcceptableException(error);
       });
       if (result) {
-        console.log(result);
         return { status: 200, message: 'file uploaded successfully' };
       }
     } catch (error) {
@@ -74,24 +57,15 @@ export class FileuploadService {
     }
   }
 
-  async updatePayment_status(id) {
-    try {
-      await this.fileuploadModel
-        .updateOne({ _id: id }, { $set: { payment_status: true } })
-        .catch((error) => {
-          throw new Error(error);
-        });
-      return { status: 200, message: 'Payment status updated' };
-    } catch (error) {
-      throw new Error(error);
-    }
+  update(id: number, updateFileuploadDto: UpdateFileuploadDto) {
+    return `This action updates a #${id} fileupload`;
   }
 
   async remove(id) {
     try {
       const response = await this.fileuploadModel.updateOne(
-        { files: { $elemMatch: { id: id } } },
-        { $set: { 'files.$.isDelete': true } },
+        { _id: id },
+        { $set: { status: false } },
       );
       if (response.modifiedCount == 1) {
         return { status: 200, message: 'Project file removed' };

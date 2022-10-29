@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { Type } from '@nestjs/class-transformer';
-import { Project } from './project.schema';
+import { Project } from './projects.schema';
 
 export type FileuploadDocument = Fileupload & Document;
 
