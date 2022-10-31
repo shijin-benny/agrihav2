@@ -88,16 +88,15 @@ export class UserService {
 
   async findAllUsers() {
     try {
-      // const response = await this.userModel.({registered_id:null})
-      // const userlist = await this.userModel
-      //   .find({})
-      //   .populate('registered_id')
-      //   .sort({ createdAt: -1 })
-      //   .exec()
-      //   .catch((error) => {
-      //     throw new NotFoundException(error);
-      //   });
-      // return { status: 200, data: userlist };
+      const userlist = await this.userModel
+        .find({})
+        .populate('registered_id')
+        .sort({ createdAt: -1 })
+        .exec()
+        .catch((error) => {
+          throw new NotFoundException(error);
+        });
+      return { status: 200, data: userlist };
     } catch (error) {
       return error;
     }
