@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { FileuploadService } from './fileupload.service';
 import { CreateFileuploadDto } from './dto/create-fileupload.dto';
@@ -30,12 +31,9 @@ export class FileuploadController {
     return this.fileuploadService.findArchitects_project(id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateFileuploadDto: UpdateFileuploadDto,
-  ) {
-    return this.fileuploadService.update(+id, updateFileuploadDto);
+  @Put(':id')
+  update(@Param('id') id: string) {
+    return this.fileuploadService.update(id);
   }
 
   @Delete(':id')

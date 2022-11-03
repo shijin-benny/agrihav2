@@ -57,8 +57,17 @@ export class FileuploadService {
     }
   }
 
-  update(id: number, updateFileuploadDto: UpdateFileuploadDto) {
-    return `This action updates a #${id} fileupload`;
+  async update(id: string) {
+    try {
+      const response = await this.fileuploadModel
+        .updateOne({ _id: id }, { $set: { payment_status: true } })
+        .catch((error) => {
+          throw new NotAcceptableException(error);
+        });
+      return { status: 200, message: 'Payment status updated' };
+    } catch (error) {
+      return error;
+    }
   }
 
   async remove(id) {
