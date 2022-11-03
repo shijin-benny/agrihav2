@@ -31,7 +31,7 @@ export class FileuploadController {
     return this.fileuploadService.findArchitects_project(id);
   }
 
-  @Put(':id')
+  @Put('payment_status/:id')
   update(@Param('id') id: string) {
     return this.fileuploadService.update(id);
   }
