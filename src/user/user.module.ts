@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Project, ProjectSchema } from '../schemas/projects.schema';
 import { MailModule } from '../Mailer/mailer.module';
 import { Fileupload, FileuploadSchema } from '../schemas/fileupload.schema';
+import { register, registerSchema } from 'src/schemas/register.schema';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { Fileupload, FileuploadSchema } from '../schemas/fileupload.schema';
       { name: User.name, schema: UserSchema },
       { name: Project.name, schema: ProjectSchema },
       { name: Fileupload.name, schema: FileuploadSchema },
+      { name: register.name, schema: registerSchema },
     ]),
   ],
   controllers: [UserController],

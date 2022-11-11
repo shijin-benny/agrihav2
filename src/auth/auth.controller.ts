@@ -1,4 +1,3 @@
-
 import {
   Controller,
   Get,
@@ -67,8 +66,12 @@ export class AuthController {
     );
   }
 
-  @Get('update-role')
-  update_dbrole() {
-    return this.authService.update_role();
-  }
+  // @Get('update-role')
+  // update_dbrole() {
+  //   return this.authService.update_role();
+  // }
+  // @Get('test')
+  // testMail() {
+  //   return this.authService.testMails();
+  // }
 }

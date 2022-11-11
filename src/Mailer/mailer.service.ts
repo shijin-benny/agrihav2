@@ -3,10 +3,16 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { join } from 'path';
 import { registerDto } from '../auth/dto/auth.dto';
 import * as moment from 'moment';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { register, registerDocument } from 'src/schemas/register.schema';
 
 @Injectable()
 export class MailService {
-  constructor(private MailerService: MailerService) {}
+  constructor(
+    private MailerService: MailerService,
+    @InjectModel(register.name) private registerModel: Model<registerDocument>,
+  ) {}
 
   // ============== send receipt and welcome mail helper /
   async welcomeMail(userDta: any) {
@@ -135,8 +141,6 @@ export class MailService {
 
   async projectAdded_mail(projectDta, userDta) {
     try {
-      console.log(projectDta);
-      console.log(userDta);
       this.MailerService.sendMail({
         to: userDta.registered_id.email,
         from: 'noreply.arclif@gmail.com',
@@ -163,6 +167,38 @@ export class MailService {
         });
     } catch (error) {
       throw new BadRequestException();
+    }
+  }
+  async notification_mail(registerDta) {
+    try {
+      const userDta = await this.registerModel.find({});
+      const date = moment().format('Do MMMM  YYYY');
+      const day = moment().format('dddd');
+      const emailList = [];
+      await userDta.map((items) => {
+        emailList.push({ name: items.name, address: items.email });
+      });
+      emailList.toString();
+      this.MailerService.sendMail({
+        to: emailList,
+        from: 'noreply.arclif@gmail.com',
+        subject: 'Congratulation',
+        template: './notification.hbs',
+        context: {
+          date: date,
+          day: day,
+        },
+      })
+        .then((res) => {
+          console.log(res);
+          // return res;
+        })
+        .catch((error) => {
+          console.log(error);
+          // throw new Error(error);
+        });
+    } catch (error) {
+      console.log(error);
     }
   }
 }

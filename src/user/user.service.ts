@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
+import { register, registerDocument } from 'src/schemas/register.schema';
 import { MailService } from '../Mailer/mailer.service';
 import { Fileupload, FileuploadDocument } from '../schemas/fileupload.schema';
 import { Project, ProjectDocument } from '../schemas/projects.schema';
@@ -20,6 +21,7 @@ export class UserService {
     @InjectModel(Fileupload.name)
     private projectFileModel: Model<FileuploadDocument>,
     private MailerService: MailService,
+    @InjectModel(register.name) private registerModel: Model<registerDocument>,
   ) {}
 
   async findOne(id: ObjectId) {
@@ -88,9 +90,8 @@ export class UserService {
 
   async findAllUsers() {
     try {
-      const userlist = await this.userModel
+      const userlist = await this.registerModel
         .find({})
-        .populate('registered_id')
         .sort({ createdAt: -1 })
         .exec()
         .catch((error) => {

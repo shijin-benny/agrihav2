@@ -5,6 +5,8 @@ import { google } from 'googleapis';
 import { MailService } from './mailer.service';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
+import { MongooseModule } from '@nestjs/mongoose';
+import { register, registerSchema } from 'src/schemas/register.schema';
 
 @Module({
   imports: [
@@ -31,6 +33,9 @@ import { join } from 'path';
         },
       },
     }),
+    MongooseModule.forFeature([
+      { name: register.name, schema: registerSchema },
+    ]),
   ],
   providers: [MailService],
   exports: [MailService],

@@ -140,6 +140,7 @@ export class AuthService {
             };
             newArchitect = new this.architectsModel(architect);
             responseDta = await newArchitect.save();
+            // this.MailerService.notification_mail(IsregisterDta);
           }
           this.MailerService.supportMail(IsregisterDta);
           const token = this.jwtService.sign({
@@ -246,4 +247,13 @@ export class AuthService {
     );
     console.log(update_role);
   }
+
+  // async testMails() {
+  //   const IsregisterDta = {
+  //     name: 'shijin',
+  //     email: 'shijin.arclif@gmail.com',
+  //     phone: '+919747045972',
+  //   };
+  //   this.MailerService.notification_mail(IsregisterDta);
+  // }
 }
