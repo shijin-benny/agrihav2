@@ -21,7 +21,22 @@ export class FileuploadService {
 
   async create(createFileuploadDto: CreateFileuploadDto) {
     try {
-      const newFileupload = new this.fileuploadModel(createFileuploadDto);
+      const IsArrayfiles = createFileuploadDto.files.map((items) => {
+        Object.assign(items, {
+          isDelete: false,
+          id:
+            Date.now() +
+            Math.floor((1 + Math.random()) * 1000000)
+              .toString(16)
+              .substring(1),
+        });
+        return items;
+      });
+      const newFileupload = new this.fileuploadModel({
+        title: createFileuploadDto.title,
+        project_id: createFileuploadDto.project_id,
+        files: IsArrayfiles,
+      });
       const result = await newFileupload.save().catch((error) => {
         throw new NotAcceptableException(error);
       });
