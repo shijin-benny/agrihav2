@@ -1,4 +1,12 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateFileuploadDto } from './create-fileupload.dto';
+import { IsArray, IsString } from 'class-validator';
+import { ObjectId } from 'mongoose';
 
-export class UpdateFileuploadDto extends PartialType(CreateFileuploadDto) {}
+export class addfilesDto {
+  @IsString()
+  filename: string;
+
+  @IsString()
+  url: string;
+
+  _id: string;
+}

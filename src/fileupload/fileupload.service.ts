@@ -9,7 +9,7 @@ import { Model, ObjectId } from 'mongoose';
 import { Fileupload, FileuploadDocument } from '../schemas/fileupload.schema';
 import { Project, ProjectDocument } from '../schemas/projects.schema';
 import { CreateFileuploadDto } from './dto/create-fileupload.dto';
-import { UpdateFileuploadDto } from './dto/update-fileupload.dto';
+import { addfilesDto } from './dto/update-fileupload.dto';
 
 @Injectable()
 export class FileuploadService {
@@ -80,6 +80,32 @@ export class FileuploadService {
           throw new NotAcceptableException(error);
         });
       return { status: 200, message: 'Payment status updated' };
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async addfiles(id, addfileDta: addfilesDto) {
+    try {
+      const newfile = {
+        filename: addfileDta.filename,
+        url: addfileDta.url,
+        isDelete: false,
+        id:
+          Date.now() +
+          Math.floor((1 + Math.random()) * 1000000)
+            .toString(16)
+            .substring(1),
+      };
+      const response = await this.fileuploadModel.updateOne(
+        { _id: id },
+        { $push: { files: newfile } },
+      );
+      if (response.matchedCount === 1) {
+        return { status: 200, message: 'New file added' };
+      } else {
+        return { status: 202, message: 'Something went wrong!,Try again' };
+      }
     } catch (error) {
       return error;
     }

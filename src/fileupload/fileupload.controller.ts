@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { FileuploadService } from './fileupload.service';
 import { CreateFileuploadDto } from './dto/create-fileupload.dto';
-import { UpdateFileuploadDto } from './dto/update-fileupload.dto';
 import { ObjectId } from 'mongoose';
+import { addfilesDto } from './dto/update-fileupload.dto';
 
 @Controller('fileupload')
 export class FileuploadController {
@@ -40,6 +40,11 @@ export class FileuploadController {
   @Delete('file/:id')
   removeFile(@Param('id') id: ObjectId, @Body('filesId') filesId: string) {
     return this.fileuploadService.removeFile(id, filesId);
+  }
+
+  @Patch('addfiles/:id')
+  updatefiles(@Param('id') id: ObjectId, @Body() addfileDta: addfilesDto) {
+    return this.fileuploadService.addfiles(id, addfileDta);
   }
 
   @Delete(':id')
