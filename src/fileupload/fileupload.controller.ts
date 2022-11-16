@@ -11,6 +11,7 @@ import {
 import { FileuploadService } from './fileupload.service';
 import { CreateFileuploadDto } from './dto/create-fileupload.dto';
 import { UpdateFileuploadDto } from './dto/update-fileupload.dto';
+import { ObjectId } from 'mongoose';
 
 @Controller('fileupload')
 export class FileuploadController {
@@ -34,6 +35,11 @@ export class FileuploadController {
   @Put('payment_status/:id')
   update(@Param('id') id: string) {
     return this.fileuploadService.update(id);
+  }
+
+  @Delete('file/:id')
+  removeFile(@Param('id') id: ObjectId, @Body('filesId') filesId: string) {
+    return this.fileuploadService.removeFile(id, filesId);
   }
 
   @Delete(':id')

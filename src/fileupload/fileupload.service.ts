@@ -85,6 +85,22 @@ export class FileuploadService {
     }
   }
 
+  async removeFile(_id, filesId) {
+    try {
+      const response = await this.fileuploadModel.updateOne(
+        { _id: _id, 'files.id': filesId },
+        { $set: { 'files.$.isDelete': true } },
+      );
+      if (response.matchedCount === 1) {
+        return { status: 200, message: 'File removed' };
+      } else {
+        return { status: 202, message: 'Something went wrong!,Try again' };
+      }
+    } catch (error) {
+      return error;
+    }
+  }
+
   async remove(id) {
     try {
       const response = await this.fileuploadModel.updateOne(
