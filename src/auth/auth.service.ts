@@ -331,6 +331,7 @@ export class AuthService {
           let newArchitect: architectsDocument;
           architect = {
             registered_id: saveDta._id,
+            profilepic: googleDto.profilePic,
           };
           newArchitect = new this.architectsModel(architect);
           responseDta = await newArchitect.save();
@@ -353,13 +354,13 @@ export class AuthService {
     }
   }
 
-  async updateType() {
-    const update_role = await this.registerModel.updateMany(
-      {},
-      { $set: { type: 'OTP' } },
-    );
-    console.log(update_role);
-  }
+  // async updateType() {
+  //   const update_role = await this.registerModel.updateMany(
+  //     {},
+  //     { $set: { type: 'OTP' } },
+  //   );
+  //   console.log(update_role);
+  // }
 
   async validateUser(details: any) {
     return details;

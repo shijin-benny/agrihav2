@@ -75,10 +75,10 @@ export class AuthController {
     );
   }
 
-  @Get('update-role')
-  update_dbrole() {
-    return this.authService.updateType();
-  }
+  // @Get('update-role')
+  // update_dbrole() {
+  //   return this.authService.updateType();
+  // }
   // @Get('test')
   // testMail() {
   //   return this.authService.testMails();
