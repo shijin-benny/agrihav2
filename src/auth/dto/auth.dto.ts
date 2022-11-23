@@ -51,3 +51,20 @@ export class architect_loginDto {
   @MinLength(13)
   phone: string;
 }
+
+export class GoogleDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  profilePic: string;
+
+  @IsString()
+  @IsNotEmpty()
+  role: string;
+}

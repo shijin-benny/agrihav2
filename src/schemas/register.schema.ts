@@ -23,6 +23,9 @@ export class register {
 
   @Prop({ type: String, index: true, required: true })
   role: string;
+
+  @Prop({ type: String, index: true, required: true })
+  type: string;
 }
 
 export const registerSchema = SchemaFactory.createForClass(register);

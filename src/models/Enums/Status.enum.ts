@@ -5,3 +5,7 @@ export enum Status {
   INACTIVE = 'INACTIVE',
   CANCEL = 'CANCEL',
 }
+export enum accessType {
+  OTP = 'OTP',
+  GOOGLE = 'GOOGLE',
+}

@@ -15,6 +15,7 @@ import { AuthService } from './auth.service';
 import { DeviceAndip } from './deviceandip.decorator';
 import {
   architect_loginDto,
+  GoogleDto,
   mobileLoginDto,
   registerDto,
   verifyMobileDto,
@@ -23,6 +24,14 @@ import {
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('google/login')
+  handleLogin(
+    @Body() googleDto: GoogleDto,
+    @DeviceAndip() DeviceAndip: DeviceIp,
+  ) {
+    return this.authService.googleLogin(googleDto, DeviceAndip);
+  }
 
   @Post('register')
   register(@Body() registerDta: registerDto) {
@@ -66,10 +75,10 @@ export class AuthController {
     );
   }
 
-  // @Get('update-role')
-  // update_dbrole() {
-  //   return this.authService.update_role();
-  // }
+  @Get('update-role')
+  update_dbrole() {
+    return this.authService.updateType();
+  }
   // @Get('test')
   // testMail() {
   //   return this.authService.testMails();

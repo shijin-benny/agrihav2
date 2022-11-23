@@ -8,6 +8,7 @@ import { MailModule } from './Mailer/mailer.module';
 import { UserModule } from './user/user.module';
 import { EnquiryModule } from './enquiry/enquiry.module';
 import { FileuploadModule } from './fileupload/fileupload.module';
+import { StarRatingModule } from './star-rating/star-rating.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { FileuploadModule } from './fileupload/fileupload.module';
     UserModule,
     EnquiryModule,
     FileuploadModule,
+    StarRatingModule,
   ],
   controllers: [],
   providers: [

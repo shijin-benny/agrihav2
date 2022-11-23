@@ -11,7 +11,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { log } from 'console';
 import { Model, ObjectId } from 'mongoose';
 import { MailService } from '../Mailer/mailer.service';
-import { OtpReason, Status } from '../models/Enums';
+import { OtpReason, Status, accessType } from '../models/Enums';
 import { architects, architectsDocument } from '../schemas/architects.schema';
 import {
   LoginSession,
@@ -23,6 +23,7 @@ import { User, UserDocument } from '../schemas/userSchema';
 import { DeviceIp } from './auth.model';
 import {
   architect_loginDto,
+  GoogleDto,
   mobileLoginDto,
   registerDto,
   verifyMobileDto,
@@ -63,6 +64,7 @@ export class AuthService {
         email: registerDta.email,
         name: registerDta.name,
         role: registerDta.role,
+        type: accessType.OTP,
       };
       newRegister = new this.registerModel(register);
       const saveDta = await newRegister.save().catch((error) => {
@@ -169,7 +171,13 @@ export class AuthService {
     try {
       const phone = parseInt(dta.phone);
       const Isphone = await this.registerModel
-        .findOne({ $and: [{ role: dta.role }, { phone: phone }] })
+        .findOne({
+          $and: [
+            { role: dta.role },
+            { phone: phone },
+            { type: accessType.OTP },
+          ],
+        })
         .exec();
       if (Isphone?.status === true) {
         const response = await this.otpService.sentOtpMobile(
@@ -240,14 +248,128 @@ export class AuthService {
     }
   }
 
-  async update_role() {
+  // googleAuthentication
+  async googleLogin(googleDto: GoogleDto, deviceDta: DeviceIp) {
+    try {
+      const IsRegister = await this.registerModel.findOne({
+        $and: [{ type: accessType.GOOGLE }, { email: googleDto.email }],
+      });
+      if (IsRegister) {
+        let userDta;
+        if (googleDto.role == 'user') {
+          userDta = await this.userModel.findOne({
+            registered_id: IsRegister._id,
+          });
+        } else {
+          userDta = await this.architectsModel.findOne({
+            registered_id: IsRegister._id,
+          });
+        }
+        let session: Partial<LoginSession>;
+        let newSession: LoginSessionDocument;
+        session = {
+          device: deviceDta.device,
+          ip: deviceDta.ip,
+          status: Status.ACTIVE,
+          reason: OtpReason.LOGIN,
+          user: IsRegister._id,
+        };
+        newSession = new this.sessionModel(session);
+        newSession.save();
+        const token = this.jwtService.sign({
+          id: userDta._id,
+        });
+        return {
+          status: 200,
+          message: `${googleDto.role} login successfully`,
+          role: googleDto.role,
+          id: userDta._id,
+          token: token,
+        };
+      } else {
+        let register: Partial<register>;
+        let newRegister: registerDocument;
+        register = {
+          phone: null,
+          email: googleDto.email,
+          name: googleDto.name,
+          role: googleDto.role,
+          type: accessType.GOOGLE,
+        };
+        newRegister = new this.registerModel(register);
+        const saveDta = await newRegister.save().catch((error) => {
+          console.log(error);
+          if (error.code === 11000) {
+            throw new ConflictException('Phone number or email already exit');
+          }
+          throw new NotAcceptableException('Register Data could not be saved');
+        });
+        let session: Partial<LoginSession>;
+        let newSession: LoginSessionDocument;
+        session = {
+          device: deviceDta.device,
+          ip: deviceDta.ip,
+          status: Status.ACTIVE,
+          reason: OtpReason.REGISTRATION,
+          user: saveDta._id,
+        };
+        newSession = new this.sessionModel(session);
+        newSession.save();
+        let responseDta;
+        if (saveDta.role == 'user') {
+          let user: Partial<User>;
+          let newUser: UserDocument;
+          user = {
+            registered_id: saveDta._id,
+            profile_pic: googleDto.profilePic,
+          };
+          newUser = new this.userModel(user);
+          responseDta = await newUser.save();
+          this.MailerService.welcomeMail(saveDta);
+        } else if (saveDta.role == 'architect') {
+          let architect: Partial<architects>;
+          let newArchitect: architectsDocument;
+          architect = {
+            registered_id: saveDta._id,
+          };
+          newArchitect = new this.architectsModel(architect);
+          responseDta = await newArchitect.save();
+          // this.MailerService.notification_mail(IsregisterDta);
+        }
+        this.MailerService.supportMail(saveDta);
+        const token = this.jwtService.sign({
+          id: responseDta._id,
+        });
+        return {
+          status: 200,
+          message: `${saveDta.role} registeration successfully`,
+          role: saveDta.role,
+          id: responseDta._id,
+          token: token,
+        };
+      }
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async updateType() {
     const update_role = await this.registerModel.updateMany(
       {},
-      { $set: { role: 'user' } },
+      { $set: { type: 'OTP' } },
     );
     console.log(update_role);
   }
 
+  async validateUser(details: any) {
+    return details;
+    // const user = await this.userModel.findOne({ email: details.email });
+    // if (user) return user;
+    // console.log('user not found. creating.....');
+    // const newUser = new this.userModel(details);
+    // const data = await newUser.save();
+    // return data;
+  }
   // async testMails() {
   //   const IsregisterDta = {
   //     name: 'shijin',
