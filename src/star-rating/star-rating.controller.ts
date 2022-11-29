@@ -20,6 +20,12 @@ export class StarRatingController {
   create(@Body() createStarRatingDto: CreateStarRatingDto) {
     return this.starRatingService.create(createStarRatingDto);
   }
+  @Get()
+  findAll() {
+    return this.starRatingService.findAll();
+  }
+
+
   @Get('/:id')
   findOne(@Param('id') architectId: ObjectId) {
     return this.starRatingService.findArchitect_ratings(architectId);
