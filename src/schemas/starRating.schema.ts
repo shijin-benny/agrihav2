@@ -26,6 +26,9 @@ export class Rating {
 
   @Prop({ required: true, sparse: true })
   rating: number;
+
+  @Prop({ required: true, sparse: true })
+  comment: string;
 }
 
 const RatingSchema = SchemaFactory.createForClass(Rating);

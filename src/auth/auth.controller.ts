@@ -49,7 +49,7 @@ export class AuthController {
       verifyMobileDta,
       DeviceAndip,
       Jwtdta.reg_id,
-      Jwtdta.id,
+      Jwtdta,
     );
   }
 
@@ -66,13 +66,7 @@ export class AuthController {
     @DeviceAndip() DeviceAndip: DeviceIp,
   ) {
     console.log(Jwtdta);
-    return this.authService.veriyLogin(
-      verifyDta,
-      Jwtdta.reg_id,
-      Jwtdta.id,
-      DeviceAndip,
-      Jwtdta.role,
-    );
+    return this.authService.veriyLogin(verifyDta, DeviceAndip, Jwtdta);
   }
 
   // @Get('update-role')

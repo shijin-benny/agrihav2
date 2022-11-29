@@ -24,6 +24,13 @@ export class StarRatingService {
     }
   }
 
+  async findAll() {
+    try {
+      const findAll = await this.RatingModel.find();
+      return { status: 200, data: findAll };
+    } catch (error) {}
+  }
+
   async findArchitect_ratings(architect_id: ObjectId) {
     try {
       const response = await this.RatingModel.find({

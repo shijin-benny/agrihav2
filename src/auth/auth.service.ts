@@ -9,6 +9,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { log } from 'console';
+import parsePhoneNumberFromString from 'libphonenumber-js';
 import { Model, ObjectId } from 'mongoose';
 import { MailService } from '../Mailer/mailer.service';
 import { OtpReason, Status, accessType } from '../models/Enums';
@@ -74,22 +75,45 @@ export class AuthService {
         }
         throw new NotAcceptableException('Register Data could not be saved');
       });
-      const response = await this.otpService.sentOtpMobile(
-        registerDta.phone,
-        OtpReason.REGISTRATION,
-      );
-      if (response.status === true) {
-        const token = this.jwtService.sign({
-          reg_id: saveDta._id,
-          id: response.OtpDta._id,
-        });
-        return {
-          status: 200,
-          message: 'OTP send successfully',
-          token: token,
-        };
+      const checkMobile = parsePhoneNumberFromString(registerDta.phone);
+      if (checkMobile?.country === 'IN') {
+        const response = await this.otpService.sentOtpMobile(
+          registerDta.phone,
+          OtpReason.REGISTRATION,
+        );
+        if (response.status === true) {
+          const token = this.jwtService.sign({
+            reg_id: saveDta._id,
+            id: response.OtpDta._id,
+          });
+          return {
+            status: 200,
+            message: 'OTP send successfully',
+            token: token,
+          };
+        }
+        return response;
+      } else {
+        const response = await this.otpService.TwiliosentOtp(registerDta.phone);
+        if (response.status === 'pending') {
+          const token = this.jwtService.sign(
+            {
+              internationNumber: true,
+              phone: registerDta.phone,
+            },
+            {
+              expiresIn: '10m',
+            },
+          );
+          return {
+            status: 200,
+            message: 'Otp send SuccessFully',
+            otpToken: token,
+          };
+        } else {
+          return { status: 401, error: response };
+        }
       }
-      return response;
     } catch (error) {
       return error;
     }
@@ -100,7 +124,7 @@ export class AuthService {
     verifyDta: verifyMobileDto,
     deviceDta: DeviceIp,
     reg_id: ObjectId,
-    id: ObjectId,
+    jwtdata,
   ) {
     try {
       const IsregisterDta = await this.registerModel
@@ -108,58 +132,66 @@ export class AuthService {
           _id: reg_id,
         })
         .exec();
-      if (IsregisterDta && IsregisterDta.status === false) {
-        const verifyOtp = await this.otpService.verifyOtp(id, verifyDta);
-        if (verifyOtp.status === 'Otp Matched') {
-          IsregisterDta.status = true;
-          IsregisterDta.save();
-          let session: Partial<LoginSession>;
-          let newSession: LoginSessionDocument;
-          session = {
-            device: deviceDta.device,
-            ip: deviceDta.ip,
-            status: Status.ACTIVE,
-            reason: OtpReason.REGISTRATION,
-            user: IsregisterDta._id,
-          };
-          newSession = new this.sessionModel(session);
-          newSession.save();
-          let responseDta;
-          if (IsregisterDta.role == 'user') {
-            let user: Partial<User>;
-            let newUser: UserDocument;
-            user = {
-              registered_id: IsregisterDta._id,
-            };
-            newUser = new this.userModel(user);
-            responseDta = await newUser.save();
-            this.MailerService.welcomeMail(IsregisterDta);
-          } else if (IsregisterDta.role == 'architect') {
-            let architect: Partial<architects>;
-            let newArchitect: architectsDocument;
-            architect = {
-              registered_id: IsregisterDta._id,
-            };
-            newArchitect = new this.architectsModel(architect);
-            responseDta = await newArchitect.save();
-            // this.MailerService.notification_mail(IsregisterDta);
-          }
-          this.MailerService.supportMail(IsregisterDta);
-          const token = this.jwtService.sign({
-            id: responseDta._id,
-          });
-          return {
-            status: 200,
-            message: `${IsregisterDta.role} registeration successfully`,
-            role: IsregisterDta.role,
-            id: responseDta._id,
-            token: token,
-          };
-        }
-      } else {
-        throw new NotFoundException(
-          'something went wrong please try resent otp option',
+      let verifyOtp;
+      if (jwtdata.internationNumber) {
+        verifyOtp = await this.otpService.twilioVerifyOtp(
+          verifyDta,
+          jwtdata.phone,
         );
+      } else {
+        if (IsregisterDta && IsregisterDta.status === false) {
+          verifyOtp = await this.otpService.verifyOtp(jwtdata.id, verifyDta);
+        } else {
+          throw new NotFoundException(
+            'something went wrong please try resent otp option',
+          );
+        }
+      }
+      if (verifyOtp.status === 'Otp Matched') {
+        IsregisterDta.status = true;
+        IsregisterDta.save();
+        let session: Partial<LoginSession>;
+        let newSession: LoginSessionDocument;
+        session = {
+          device: deviceDta.device,
+          ip: deviceDta.ip,
+          status: Status.ACTIVE,
+          reason: OtpReason.REGISTRATION,
+          user: IsregisterDta._id,
+        };
+        newSession = new this.sessionModel(session);
+        newSession.save();
+        let responseDta;
+        if (IsregisterDta.role == 'user') {
+          let user: Partial<User>;
+          let newUser: UserDocument;
+          user = {
+            registered_id: IsregisterDta._id,
+          };
+          newUser = new this.userModel(user);
+          responseDta = await newUser.save();
+          this.MailerService.welcomeMail(IsregisterDta);
+        } else if (IsregisterDta.role == 'architect') {
+          let architect: Partial<architects>;
+          let newArchitect: architectsDocument;
+          architect = {
+            registered_id: IsregisterDta._id,
+          };
+          newArchitect = new this.architectsModel(architect);
+          responseDta = await newArchitect.save();
+          // this.MailerService.notification_mail(IsregisterDta);
+        }
+        this.MailerService.supportMail(IsregisterDta);
+        const token = this.jwtService.sign({
+          id: responseDta._id,
+        });
+        return {
+          status: 200,
+          message: `${IsregisterDta.role} registeration successfully`,
+          role: IsregisterDta.role,
+          id: responseDta._id,
+          token: token,
+        };
       }
     } catch (error) {
       return error;
@@ -179,20 +211,43 @@ export class AuthService {
           ],
         })
         .exec();
+      const checkMobile = parsePhoneNumberFromString(dta.phone);
+
       if (Isphone?.status === true) {
-        const response = await this.otpService.sentOtpMobile(
-          dta.phone,
-          OtpReason.LOGIN,
-        );
-        if (response?.status === true) {
-          const token = this.jwtService.sign({
-            reg_id: Isphone._id,
-            id: response.OtpDta?._id,
-            role: dta.role,
-          });
-          return { status: 200, token: token };
+        if (checkMobile?.country === 'IN') {
+          const response = await this.otpService.sentOtpMobile(
+            dta.phone,
+            OtpReason.LOGIN,
+          );
+          if (response?.status === true) {
+            const token = this.jwtService.sign({
+              reg_id: Isphone._id,
+              id: response.OtpDta?._id,
+              role: dta.role,
+            });
+            return { status: 200, token: token };
+          }
+          return response;
+        } else {
+          const response = await this.otpService.TwiliosentOtp(dta.phone);
+          if (response.status === 'pending') {
+            const token = this.jwtService.sign(
+              {
+                internationNumber: true,
+                reg_id: Isphone._id,
+                phone: dta.phone,
+                role: dta.role,
+              },
+              {
+                expiresIn: '10m',
+              },
+            );
+            return {
+              status: 200,
+              token: token,
+            };
+          }
         }
-        return response;
       } else if (Isphone?.status === false) {
         throw new UnauthorizedException(
           'Registeration process is not correct.Please register correctly',
@@ -206,23 +261,27 @@ export class AuthService {
     }
   }
 
-  async veriyLogin(
-    verifyDta: verifyMobileDto,
-    reg_id: ObjectId,
-    otpId: ObjectId,
-    DeviceAndip: DeviceIp,
-    role: string,
-  ) {
-    const Isregister = await this.registerModel.findOne({ _id: reg_id });
+  async veriyLogin(verifyDta: verifyMobileDto, DeviceAndip: DeviceIp, Jwtdta) {
+    const Isregister = await this.registerModel.findOne({ _id: Jwtdta.reg_id });
     let userDta;
-    if (role == 'user') {
-      userDta = await this.userModel.findOne({ registered_id: reg_id });
+    if (Jwtdta.role == 'user') {
+      userDta = await this.userModel.findOne({ registered_id: Jwtdta.reg_id });
     } else {
-      userDta = await this.architectsModel.findOne({ registered_id: reg_id });
+      userDta = await this.architectsModel.findOne({
+        registered_id: Jwtdta.reg_id,
+      });
     }
     if (Isregister) {
-      const response = await this.otpService.verifyOtp(otpId, verifyDta);
-      if (response.status === 'Otp Matched') {
+      let verifyOtp;
+      if (Jwtdta.internationNumber) {
+        verifyOtp = await this.otpService.twilioVerifyOtp(
+          verifyDta,
+          Jwtdta.phone,
+        );
+      } else {
+        verifyOtp = await this.otpService.verifyOtp(Jwtdta.id, verifyDta);
+      }
+      if (verifyOtp.status === 'Otp Matched') {
         let session: Partial<LoginSession>;
         let newSession: LoginSessionDocument;
         session = {
@@ -239,8 +298,8 @@ export class AuthService {
         });
         return {
           status: 200,
-          message: `${role} login successfully`,
-          role: role,
+          message: `${Jwtdta.role} login successfully`,
+          role: Jwtdta.role,
           id: userDta._id,
           token: token,
         };

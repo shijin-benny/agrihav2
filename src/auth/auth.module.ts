@@ -14,6 +14,8 @@ import {
 import { User, UserSchema } from '../schemas/userSchema';
 import { MailModule } from '../Mailer/mailer.module';
 import { architects, architectsSchema } from '../schemas/architects.schema';
+import { TwilioModule } from 'nestjs-twilio';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -22,6 +24,9 @@ import { architects, architectsSchema } from '../schemas/architects.schema';
     JwtModule.register({
       secret: 'super-secret-code',
     }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     MongooseModule.forFeature([
       { name: Otp.name, schema: OtpSchema },
       { name: register.name, schema: registerSchema },
@@ -29,6 +34,10 @@ import { architects, architectsSchema } from '../schemas/architects.schema';
       { name: User.name, schema: UserSchema },
       { name: architects.name, schema: architectsSchema },
     ]),
+    TwilioModule.forRoot({
+      accountSid: process.env.ACCOUNTSID,
+      authToken: process.env.AUTHTOKEN,
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService, otpService, Jwtstrategy],
