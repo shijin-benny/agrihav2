@@ -1,7 +1,7 @@
 import { Injectable, NotAcceptableException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { Rating, RatingDocument } from 'src/schemas/starRating.schema';
+import { Rating, RatingDocument } from '../schemas/starRating.schema';
 import { CreateStarRatingDto } from './dto/create-star-rating.dto';
 import { UpdateStarRatingDto } from './dto/update-star-rating.dto';
 
@@ -14,10 +14,22 @@ export class StarRatingService {
 
   async create(createDta: CreateStarRatingDto) {
     try {
-      const newRating = new this.RatingModel(createDta);
-      const response = await newRating.save().catch((error) => {
-        throw new NotAcceptableException(error);
+      let response;
+      const IsRating = await this.RatingModel.findOne({
+        $and: [
+          { user_id: createDta.user_id },
+          { architect_id: createDta.architect_id },
+        ],
       });
+      if (IsRating) {
+        IsRating.rating = createDta.rating;
+        response = await IsRating.save();
+      } else {
+        const newRating = new this.RatingModel(createDta);
+        response = await newRating.save().catch((error) => {
+          throw new NotAcceptableException(error);
+        });
+      }
       return { status: 200, data: response };
     } catch (error) {
       return error;

@@ -18,10 +18,10 @@ export class Fileupload {
   files: [];
 
   @Prop({ default: true, index: true })
-  status: Boolean;
+  status: boolean;
 
   @Prop({ default: false })
-  payment_status: Boolean;
+  payment_status: boolean;
 }
 
 const FileuploadSchema = SchemaFactory.createForClass(Fileupload);

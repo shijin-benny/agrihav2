@@ -19,6 +19,5 @@ export class CreateStarRatingDto {
   rating: number;
 
   @IsString()
-  @IsNotEmpty()
   comment: string;
 }

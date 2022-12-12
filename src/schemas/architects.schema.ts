@@ -30,6 +30,9 @@ export class architects {
   regno: string;
 
   @Prop()
+  companyName: string;
+
+  @Prop()
   verified: boolean;
 
   @Prop()
@@ -45,8 +48,6 @@ export class architects {
   bio: string;
 }
 
-const architectsSchema = SchemaFactory.createForClass(architects);
+export const architectsSchema = SchemaFactory.createForClass(architects);
 
-architectsSchema.index({ title: 'text' });
-
-export { architectsSchema };
+architectsSchema.index({ '$**': 'text' }, { sparse: true });

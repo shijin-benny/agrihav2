@@ -9,8 +9,13 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { log } from 'console';
+import e from 'express';
 import parsePhoneNumberFromString from 'libphonenumber-js';
-import { Model, ObjectId } from 'mongoose';
+import mongoose, { Model, ObjectId } from 'mongoose';
+import {
+  testRegister,
+  testRegisterDocument,
+} from '../schemas/testRegister.schema';
 import { MailService } from '../Mailer/mailer.service';
 import { OtpReason, Status, accessType } from '../models/Enums';
 import { architects, architectsDocument } from '../schemas/architects.schema';
@@ -44,6 +49,8 @@ export class AuthService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(architects.name)
     private architectsModel: Model<architectsDocument>,
+    @InjectModel(testRegister.name)
+    private testRegisterModel: Model<testRegisterDocument>,
     private MailerService: MailService,
   ) {}
 
@@ -123,13 +130,13 @@ export class AuthService {
   async verifyMobile(
     verifyDta: verifyMobileDto,
     deviceDta: DeviceIp,
-    reg_id: ObjectId,
-    jwtdata,
+    jwtdata: any,
   ) {
     try {
+      const id = new mongoose.Types.ObjectId(jwtdata.reg_id);
       const IsregisterDta = await this.registerModel
         .findOne({
-          _id: reg_id,
+          _id: id,
         })
         .exec();
       let verifyOtp;
@@ -262,6 +269,7 @@ export class AuthService {
   }
 
   async veriyLogin(verifyDta: verifyMobileDto, DeviceAndip: DeviceIp, Jwtdta) {
+    console.log(DeviceAndip);
     const Isregister = await this.registerModel.findOne({ _id: Jwtdta.reg_id });
     let userDta;
     if (Jwtdta.role == 'user') {
@@ -406,6 +414,97 @@ export class AuthService {
           role: saveDta.role,
           id: responseDta._id,
           token: token,
+        };
+      }
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // test  register users
+  async testRegister(registerDta: registerDto) {
+    try {
+      let data = {
+        phone: registerDta.phone,
+        email: registerDta.email,
+        name: registerDta.name,
+        role: registerDta.role,
+        type: accessType.OTP,
+      };
+      const IsRegister = await this.registerModel.findOne({
+        $and: [{ phone: registerDta.phone }, { role: registerDta.role }],
+      });
+      if (IsRegister) {
+        return {
+          status: 201,
+          message: 'User already exists',
+        };
+      }
+      const newRegister = await this.registerModel
+        .create(data)
+        .catch((error) => {
+          throw new NotAcceptableException(error);
+        });
+      let newUser;
+      if (registerDta.role === 'user') {
+        newUser = await this.userModel
+          .create({ registered_id: newRegister._id })
+          .catch((error) => {
+            throw new NotAcceptableException(error);
+          });
+      } else {
+        newUser = await this.architectsModel
+          .create({ registered_id: newRegister._id })
+          .catch((error) => {
+            throw new NotAcceptableException(error);
+          });
+      }
+      const token = this.jwtService.sign({
+        id: newUser._id,
+      });
+      return {
+        status: 200,
+        message: `${newRegister.role} registeration successfully`,
+        role: newRegister.role,
+        id: newUser._id,
+        token: token,
+      };
+    } catch (error) {
+      return error;
+    }
+  }
+
+  // test user login
+  async testLogin(loginDta: mobileLoginDto) {
+    try {
+      const IsLoggedIn = await this.registerModel.findOne({
+        $and: [{ phone: loginDta.phone }, { role: loginDta.role }],
+      });
+      if (IsLoggedIn) {
+        let IsUser;
+        if (loginDta.role === 'user') {
+          IsUser = await this.userModel.findOne({
+            registered_id: IsLoggedIn.id,
+          });
+        } else {
+          IsUser = await this.architectsModel.findOne({
+            registered_id: IsLoggedIn.id,
+          });
+        }
+        const token = this.jwtService.sign({
+          id: IsUser._id,
+        });
+        return {
+          status: 200,
+          message: `${loginDta.role} login successfully`,
+          role: loginDta.role,
+          id: IsUser._id,
+          token: token,
+        };
+      } else {
+        return {
+          status: 401,
+          message: `${loginDta.role} not registered. Please register now`,
         };
       }
     } catch (error) {

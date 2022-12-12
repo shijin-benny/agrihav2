@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, projectDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetCurrentUserById } from '../utils';
+import { Request } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -21,7 +23,7 @@ export class UserController {
   @Get('profile')
   @UseGuards(AuthGuard('jwt'))
   findOne(@GetCurrentUserById() Jwtdta: any) {
-    return this.userService.findOne(Jwtdta.id);
+    return this.userService.findOne(Jwtdta);
   }
   @Get('userlist')
   getAllUsers() {

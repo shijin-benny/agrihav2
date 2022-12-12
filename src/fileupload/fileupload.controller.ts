@@ -7,11 +7,17 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { FileuploadService } from './fileupload.service';
-import { CreateFileuploadDto } from './dto/create-fileupload.dto';
+import {
+  CreateFileuploadDto,
+  CreateUserFileuploadDto,
+} from './dto/create-fileupload.dto';
 import { ObjectId } from 'mongoose';
 import { addfilesDto } from './dto/update-fileupload.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { GetCurrentUserById } from '../utils';
 
 @Controller('fileupload')
 export class FileuploadController {
@@ -20,6 +26,11 @@ export class FileuploadController {
   @Post()
   create(@Body() createFileuploadDto: CreateFileuploadDto) {
     return this.fileuploadService.create(createFileuploadDto);
+  }
+
+  @Get()
+  findAllFiles() {
+    return this.fileuploadService.findAllfiles();
   }
 
   @Get('uploaded_file/:id')
@@ -50,5 +61,20 @@ export class FileuploadController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.fileuploadService.remove(id);
+  }
+
+  @Post('user')
+  @UseGuards(AuthGuard('jwt'))
+  newUserFile(
+    @Body() userfileDta: CreateUserFileuploadDto,
+    @GetCurrentUserById() Jwtdta: any,
+  ) {
+    return this.fileuploadService.newUserFile(userfileDta, Jwtdta);
+  }
+
+  @Get('userfiles')
+  @UseGuards(AuthGuard('jwt'))
+  findUserFile(string, @GetCurrentUserById() Jwtdta: any) {
+    return this.fileuploadService.findUserFile(Jwtdta);
   }
 }

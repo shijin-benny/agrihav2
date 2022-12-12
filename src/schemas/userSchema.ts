@@ -50,6 +50,6 @@ export class User {
 
 const UserSchema = SchemaFactory.createForClass(User);
 
-UserSchema.index({ title: 'text' });
+UserSchema.index({ '$**': 'text' });
 
 export { UserSchema };

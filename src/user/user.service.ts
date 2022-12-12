@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { register, registerDocument } from 'src/schemas/register.schema';
+import { register, registerDocument } from '../schemas/register.schema';
 import { MailService } from '../Mailer/mailer.service';
 import { Fileupload, FileuploadDocument } from '../schemas/fileupload.schema';
 import { Project, ProjectDocument } from '../schemas/projects.schema';
@@ -24,10 +24,10 @@ export class UserService {
     @InjectModel(register.name) private registerModel: Model<registerDocument>,
   ) {}
 
-  async findOne(id: ObjectId) {
+  async findOne(userId) {
     try {
       const userData = await this.userModel
-        .findById(id)
+        .findById(userId.id)
         .populate('registered_id');
       return { status: 200, userData: userData };
     } catch (error) {

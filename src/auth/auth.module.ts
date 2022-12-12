@@ -1,4 +1,5 @@
-import { Module, HttpModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -16,6 +17,10 @@ import { MailModule } from '../Mailer/mailer.module';
 import { architects, architectsSchema } from '../schemas/architects.schema';
 import { TwilioModule } from 'nestjs-twilio';
 import { ConfigModule } from '@nestjs/config';
+import {
+  testRegister,
+  testRegisterSchema,
+} from '../schemas/testRegister.schema';
 
 @Module({
   imports: [
@@ -33,6 +38,7 @@ import { ConfigModule } from '@nestjs/config';
       { name: LoginSession.name, schema: LoginSessionSchema },
       { name: User.name, schema: UserSchema },
       { name: architects.name, schema: architectsSchema },
+      { name: testRegister.name, schema: testRegisterSchema },
     ]),
     TwilioModule.forRoot({
       accountSid: process.env.ACCOUNTSID,

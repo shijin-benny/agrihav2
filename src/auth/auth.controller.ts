@@ -7,8 +7,10 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 import { GetCurrentUserById } from '../utils';
 import { DeviceIp } from './auth.model';
 import { AuthService } from './auth.service';
@@ -43,13 +45,12 @@ export class AuthController {
   verifyMobile(
     @Body() verifyMobileDta: verifyMobileDto,
     @DeviceAndip() DeviceAndip: DeviceIp,
-    @GetCurrentUserById() Jwtdta: any,
+    @Req() Jwtdata: Request,
   ) {
     return this.authService.verifyMobile(
       verifyMobileDta,
       DeviceAndip,
-      Jwtdta.reg_id,
-      Jwtdta,
+      Jwtdata.user,
     );
   }
 
@@ -62,11 +63,20 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   verifyLogin(
     @Body() verifyDta: verifyMobileDto,
-    @GetCurrentUserById() Jwtdta: any,
+    @Req() Jwtdta: Request,
     @DeviceAndip() DeviceAndip: DeviceIp,
   ) {
-    console.log(Jwtdta);
-    return this.authService.veriyLogin(verifyDta, DeviceAndip, Jwtdta);
+    return this.authService.veriyLogin(verifyDta, DeviceAndip, Jwtdta.user);
+  }
+
+  @Post('test/register')
+  testRegister(@Body() registerDta: registerDto) {
+    return this.authService.testRegister(registerDta);
+  }
+
+  @Post('test/login')
+  testLogin(@Body() loginDta: mobileLoginDto) {
+    return this.authService.testLogin(loginDta);
   }
 
   // @Get('update-role')
@@ -74,7 +84,8 @@ export class AuthController {
   //   return this.authService.updateType();
   // }
   // @Get('test')
-  // testMail() {
-  //   return this.authService.testMails();
+  // @UseGuards(AuthGuard('jwt'))
+  // testMail(@Req() Jwtdata: Request) {
+  //   return Jwtdata.user;
   // }
 }

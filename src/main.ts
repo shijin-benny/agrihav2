@@ -9,13 +9,20 @@ async function bootstrap() {
     bodyParser: true,
   });
   app.enableCors({
-    origin: '*',
+    origin: [
+      'https://www.agriha.com',
+      'https://agriha.com',
+      'https://agriha.arclif.com',
+      'http://192.168.29.27:3000/',
+      'http://192.168.29.158:3000/',
+      'http://192.168.29.30:3000/',
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
 
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+    new ValidationPipe({ whitelist: false, forbidNonWhitelisted: false }),
   );
   app.use(expressip().getIpInfoMiddleware);
   const port = process.env.PORT || 8081;

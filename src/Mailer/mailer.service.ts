@@ -5,7 +5,7 @@ import { registerDto } from '../auth/dto/auth.dto';
 import * as moment from 'moment';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { register, registerDocument } from 'src/schemas/register.schema';
+import { register, registerDocument } from '../schemas/register.schema';
 
 @Injectable()
 export class MailService {
@@ -72,6 +72,7 @@ export class MailService {
         ],
       })
         .then((res) => {
+          console.log(res);
           return res;
         })
         .catch((error) => {

@@ -9,6 +9,19 @@ import { UserModule } from './user/user.module';
 import { EnquiryModule } from './enquiry/enquiry.module';
 import { FileuploadModule } from './fileupload/fileupload.module';
 import { StarRatingModule } from './star-rating/star-rating.module';
+import { ActivitylogModule } from './activitylog/activitylog.module';
+import { ArchitectsModule } from './architects/architects.module';
+import { PaymentplansModule } from './paymentplans/paymentplans.module';
+import { PostsOldModule } from './posts_old/posts_old.module';
+import { ProjectRequirementsModule } from './project_requirements/project_requirements.module';
+import { ProjectTypesModule } from './project_types/project_types.module';
+import { ProjectSubTypesModule } from './project-sub_types/project-sub_types.module';
+import { ProjectsModule } from './projects/projects.module';
+import { SearchModule } from './search/search.module';
+import { UserPlansModule } from './user-plans/user-plans.module';
+import { UsersModule } from './users/users.module';
+import { RequirementlistModule } from './requirementlist/requirementlist.module';
+import { QuotationModule } from './quotation/quotation.module';
 
 @Module({
   imports: [
@@ -20,12 +33,25 @@ import { StarRatingModule } from './star-rating/star-rating.module';
     MailModule,
     ThrottlerModule.forRoot({
       ttl: 60,
-      limit: 10,
+      limit: 100,
     }),
     UserModule,
     EnquiryModule,
     FileuploadModule,
     StarRatingModule,
+    ActivitylogModule,
+    ArchitectsModule,
+    PaymentplansModule,
+    PostsOldModule,
+    ProjectRequirementsModule,
+    ProjectTypesModule,
+    ProjectSubTypesModule,
+    ProjectsModule,
+    SearchModule,
+    UserPlansModule,
+    UsersModule,
+    RequirementlistModule,
+    QuotationModule,
   ],
   controllers: [],
   providers: [

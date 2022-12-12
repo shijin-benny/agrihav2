@@ -6,7 +6,7 @@ import { MailService } from './mailer.service';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
 import { MongooseModule } from '@nestjs/mongoose';
-import { register, registerSchema } from 'src/schemas/register.schema';
+import { register, registerSchema } from '../schemas/register.schema';
 
 @Module({
   imports: [

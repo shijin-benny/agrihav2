@@ -1,14 +1,23 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotAcceptableException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { notEqual } from 'assert';
 import { Model, ObjectId } from 'mongoose';
+import {
+  Userfileupload,
+  UserfileuploadDocument,
+} from '../schemas/userfileupload.schema';
 import { Fileupload, FileuploadDocument } from '../schemas/fileupload.schema';
 import { Project, ProjectDocument } from '../schemas/projects.schema';
-import { CreateFileuploadDto } from './dto/create-fileupload.dto';
+import {
+  CreateFileuploadDto,
+  CreateUserFileuploadDto,
+} from './dto/create-fileupload.dto';
 import { addfilesDto } from './dto/update-fileupload.dto';
 
 @Injectable()
@@ -17,6 +26,8 @@ export class FileuploadService {
     @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
     @InjectModel(Fileupload.name)
     private fileuploadModel: Model<FileuploadDocument>,
+    @InjectModel(Userfileupload.name)
+    private useruploadModel: Model<UserfileuploadDocument>,
   ) {}
 
   async create(createFileuploadDto: CreateFileuploadDto) {
@@ -56,6 +67,15 @@ export class FileuploadService {
       return { status: 200, data: uploaded_data };
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  async findAllfiles() {
+    try {
+      const Allfiles = await this.fileuploadModel.find({});
+      return { status: 200, files: Allfiles };
+    } catch (error) {
+      return error;
     }
   }
 
@@ -138,6 +158,44 @@ export class FileuploadService {
       }
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  async newUserFile(newUserFileDta: any, Jwtdta) {
+    try {
+      newUserFileDta.user_id = Jwtdta.id;
+      const IsUserfile = await this.useruploadModel.findOne({
+        $and: [
+          { project_id: newUserFileDta.project_id },
+          { user_id: Jwtdta.id },
+        ],
+      });
+      if (IsUserfile) {
+        throw new ConflictException('Userfile already exists');
+      }
+      const response = await this.useruploadModel
+        .create(newUserFileDta)
+        .catch((error) => {
+          throw new BadRequestException(error);
+        });
+      return { status: 200, message: 'Userfile created' };
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+  async findUserFile(Jwtdta) {
+    try {
+      const IsUserfile = await this.useruploadModel.find({
+        user_id: Jwtdta.id,
+      });
+      if (IsUserfile) {
+        return { status: 200, userFile: IsUserfile };
+      } else {
+        throw new NotFoundException('user files not found');
+      }
+    } catch (error) {
+      return error;
     }
   }
 }

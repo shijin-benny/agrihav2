@@ -4,6 +4,7 @@ import { DeviceIp } from './auth.model';
 
 export const DeviceAndip = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
+    console.log('wrk');
     const request = ctx.switchToHttp().getRequest();
     const agent = useragent.parse(request.headers['user-agent']);
     const ip =
@@ -15,6 +16,7 @@ export const DeviceAndip = createParamDecorator(
       device: agent.device.toString(),
       ip,
     };
+    console.log(dIp + 'From: ');
     return dIp;
   },
 );

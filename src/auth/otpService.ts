@@ -1,28 +1,30 @@
 import {
   BadRequestException,
   ConflictException,
-  HttpService,
   Injectable,
   NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { AxiosResponse } from 'axios';
 import { log } from 'console';
 import { NationalNumber, parsePhoneNumberFromString } from 'libphonenumber-js';
 import { Model, ObjectId } from 'mongoose';
-import { TwilioService } from 'nestjs-twilio';
+
 import { OtpReason, Status } from '../models/Enums';
 import { Otp, otpDocument } from '../schemas/otp.schema';
 import { mobileLoginDto, verifyMobileDto } from './dto/auth.dto';
+import { InjectTwilio, TwilioClient } from 'nestjs-twilio';
 const SMS_API = `682b19a3-7047-11eb-a9bc-0200cd936042`;
+
 @Injectable()
 export class otpService {
   constructor(
     private http: HttpService,
     @InjectModel(Otp.name) private otpModel: Model<otpDocument>,
-    private twilioService: TwilioService,
+    @InjectTwilio() private readonly client: TwilioClient,
   ) {}
 
   async sentOtpMobile(phone: string, reason: OtpReason) {
@@ -33,7 +35,7 @@ export class otpService {
       if (IsOtp == null) {
         const numberDetails = parsePhoneNumberFromString(phone);
         if (numberDetails?.country === 'IN') {
-          let response: AxiosResponse<any>;
+          let response;
           try {
             response = await this.http
               .post(
@@ -81,7 +83,7 @@ export class otpService {
     }
     const mobile = parsePhoneNumberFromString(Isotp.phone);
     if (mobile?.country === 'IN') {
-      let response: AxiosResponse<any>;
+      let response;
       try {
         response = await this.http
           .get(
@@ -106,7 +108,7 @@ export class otpService {
 
   async TwiliosentOtp(phone: string) {
     try {
-      const response = await this.twilioService.client.verify
+      const response = await this.client.verify
         .services(process.env.SERVICEID)
         .verifications.create({
           to: phone,
@@ -122,7 +124,7 @@ export class otpService {
   }
   async twilioVerifyOtp(otp, phone) {
     try {
-      const response = await this.twilioService.client.verify
+      const response = await this.client.verify
         .services(process.env.SERVICEID)
         .verificationChecks.create({
           to: phone,

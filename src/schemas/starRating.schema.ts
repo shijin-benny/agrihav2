@@ -27,7 +27,7 @@ export class Rating {
   @Prop({ required: true, sparse: true })
   rating: number;
 
-  @Prop({ required: true, sparse: true })
+  @Prop({ required: false, sparse: true })
   comment: string;
 }
 
